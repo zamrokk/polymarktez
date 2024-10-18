@@ -132,24 +132,28 @@ const BetFunction: React.FC<{ endpoint: string; user: User, setError: (s: string
   };
 
   return (
-    <span style={{ alignContent: "center", paddingLeft: 100 }}>
-      <label >Choose candidate:</label>
+    <span style={{ alignContent: "center", width: "100%" }}>
+      <h3 >Choose candidate</h3>
 
-      <select name="options" value={option} >
-        <option value="trump"> <div className='picDiv'>
-          <img style={{ objectFit: "cover", height: "inherit" }} src='https://polymarket.com/_next/image?url=https%3A%2F%2Fpolymarket-upload.s3.us-east-2.amazonaws.com%2Fwill-donald-trump-win-the-2024-us-presidential-election-c83f01bb-5089-4222-9347-3f12673b6a48.png&w=1018&q=100'></img>
-        </div>
-
+      <select name="options" onChange={(e) => setOption(e.target.value)} value={option} >
+        <option value="trump" >
           Donald Trump</option>
-        <option value="harris"> <div className='picDiv'>
-          <img style={{ objectFit: "cover", height: "inherit" }} src='https://polymarket.com/_next/image?url=https%3A%2F%2Fpolymarket-upload.s3.us-east-2.amazonaws.com%2Fwill-kamala-harris-win-the-2024-us-presidential-election-21483ac3-94a5-4efd-b89e-05cdca69753f.png&w=1018&q=100'></img>
-        </div>
-
+        <option value="harris" >
           Kamala Harris</option>
       </select>
-      <input type="number" id="amount" name="amount" required />
+      <h3 >Amount</h3>
+      <input type="number" id="amount" name="amount" required onChange={(e) => setAmount(Number(e.target.value))} />
+
+
+      <hr />
       <button onClick={runFunction}>Bet</button>
 
+      <table style={{ fontWeight: "normal", width: "100%" }}>
+        <tr><td style={{ textAlign: "left" }}>Avg price</td><td style={{ textAlign: "right" }}>60.6¢</td></tr>
+        <tr><td style={{ textAlign: "left" }}>Shares</td><td style={{ textAlign: "right" }}>16.50</td></tr>
+        <tr><td style={{ textAlign: "left" }}>Potential return</td><td style={{ textAlign: "right" }}>$16.50 (65.01%)</td></tr>
+
+      </table>
     </span>
   );
 };
@@ -159,13 +163,18 @@ const BetFunction: React.FC<{ endpoint: string; user: User, setError: (s: string
 function App() {
   const [count, setCount] = useState(0);
   const [error, setError] = useState("");
+  const [balance, setBalance] = useState(0);
 
   return (
     <>
       <header >
         <span style={{ display: "flex" }}>
-          <h1>Polymarktez </h1> <RunSmartFunction endpoint={DEFAULT_ENDPOINT} user={USER_TAQUITO} setError={setError} />
-          <div style={{ position: "absolute", right: "2em", top: "calc(50px + 2rem)" }}>John Doe</div>
+          <h1>Polymarktez </h1>
+          <RunSmartFunction endpoint={DEFAULT_ENDPOINT} user={USER_TAQUITO} setError={setError} />
+          <div style={{ alignContent: "flex-end", marginLeft: "auto" }}> Cash : ${balance}  <div className="chip">
+            <img src="https://cdn.britannica.com/66/226766-138-235EFD92/who-is-President-Joe-Biden.jpg?w=800&h=450&c=crop" alt="Person" width="96" height="96" />
+            Joe Biden
+          </div> </div>
         </span>
       </header>
 
