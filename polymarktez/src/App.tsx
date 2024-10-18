@@ -19,9 +19,9 @@ const USER_ALICE = {
 
 
 const USER_TAQUITO = {
-  publicKey: "edpkteL8LTYgExw479sQKJ9HTWEBY1dbre8PMbAMpeEYdWE6fyvpGL",
-  address: "tz1WF2UEzaSh4oGHV2TWrqjQBZaJQjXmrrw6",
-  secretKey: "edskRcMe15hR8mdANQuJPLMnaaWzhxkskgxcnYQ2QVZJ5iB4PSRnG2NcujzEfweph7KoES1uGUFxnxtstTBJYaTrWoEza6r8FL"
+  address: "tz1aoYjbTK7HKAynaE3C4qXGCLmekKZwgF9y",
+  publicKey: "edpkuaP71Z483V1mHFFSKivDwshyW4Ac5kwbscMyXBHd2zksEUKHnF",
+  secretKey: "3BhDJsDXyZQUtu1cbXDyLBiavv1Av6Gh9qBvih88d5mGnR6wP21dSXk"
 }
 
 
@@ -83,7 +83,7 @@ const RunSmartFunction: React.FC<{ endpoint: string; user: User, setError: (s: s
   user,
   setError
 }) => {
-  const [uri, setUri] = useState("tz1gpuyvBotqNRQoPPstGmzAWLG4eomTyBL8");
+  const [uri, setUri] = useState("tz1Uiua5SyiY6wQQgmKjeHaBn9kEotVCTquY");
   const [functionResult, setFunctionResult] = useState(0);
 
   const runFunction = async () => {
@@ -92,7 +92,7 @@ const RunSmartFunction: React.FC<{ endpoint: string; user: User, setError: (s: s
       setFunctionResult(result.statusCode);
     } catch (error) {
       console.error("ERROR", error);
-      setError((error as Error).message + "\n" + (error as Error).stack);
+      setError(typeof error === "string" ? error : (error as Error).message + "\n" + (error as Error).stack);
     }
 
   };
@@ -104,6 +104,57 @@ const RunSmartFunction: React.FC<{ endpoint: string; user: User, setError: (s: s
     </span>
   );
 };
+
+
+
+const BetFunction: React.FC<{ endpoint: string; user: User, setError: (s: string) => void }> = ({
+  endpoint,
+  user,
+  setError
+}) => {
+  const [uri, setUri] = useState("tz1Uiua5SyiY6wQQgmKjeHaBn9kEotVCTquY" + "/bet");
+  const [functionResult, setFunctionResult] = useState(0);
+
+
+  const [amount, setAmount] = useState(0);
+  const [option, setOption] = useState("trump");
+
+
+  const runFunction = async () => {
+    try {
+      const result = await new Jstz(endpoint).run(user, { uri: uri + "?option=" + option + "&quantity=" + amount });
+      setFunctionResult(result.statusCode);
+    } catch (error) {
+      console.error("ERROR", error);
+      setError(typeof error === "string" ? error : (error as Error).message + "\n" + (error as Error).stack);
+    }
+
+  };
+
+  return (
+    <span style={{ alignContent: "center", paddingLeft: 100 }}>
+      <label >Choose candidate:</label>
+
+      <select name="options" value={option} >
+        <option value="trump"> <div className='picDiv'>
+          <img style={{ objectFit: "cover", height: "inherit" }} src='https://polymarket.com/_next/image?url=https%3A%2F%2Fpolymarket-upload.s3.us-east-2.amazonaws.com%2Fwill-donald-trump-win-the-2024-us-presidential-election-c83f01bb-5089-4222-9347-3f12673b6a48.png&w=1018&q=100'></img>
+        </div>
+
+          Donald Trump</option>
+        <option value="harris"> <div className='picDiv'>
+          <img style={{ objectFit: "cover", height: "inherit" }} src='https://polymarket.com/_next/image?url=https%3A%2F%2Fpolymarket-upload.s3.us-east-2.amazonaws.com%2Fwill-kamala-harris-win-the-2024-us-presidential-election-21483ac3-94a5-4efd-b89e-05cdca69753f.png&w=1018&q=100'></img>
+        </div>
+
+          Kamala Harris</option>
+      </select>
+      <input type="number" id="amount" name="amount" required />
+      <button onClick={runFunction}>Bet</button>
+
+    </span>
+  );
+};
+
+
 
 function App() {
   const [count, setCount] = useState(0);
@@ -167,11 +218,8 @@ function App() {
         }}>
 
           <span className='tdTable'>
-            <div className='picDiv'>
-              <img style={{ objectFit: "cover", height: "inherit" }} src='https://polymarket.com/_next/image?url=https%3A%2F%2Fpolymarket-upload.s3.us-east-2.amazonaws.com%2Fwill-donald-trump-win-the-2024-us-presidential-election-c83f01bb-5089-4222-9347-3f12673b6a48.png&w=1018&q=100'></img>
-            </div>
 
-            Donald Trump
+            <BetFunction endpoint={DEFAULT_ENDPOINT} setError={setError} user={USER_TAQUITO} />
 
           </span>
 

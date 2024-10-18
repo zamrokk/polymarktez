@@ -14,17 +14,19 @@ npm run build
 ```
 jstz deploy dist/index.js
 
-
-
+---
+together surprise expose pledge shoulder crawl battle hip term toe absorb spice
+tz1aoYjbTK7HKAynaE3C4qXGCLmekKZwgF9y
+---
 
 jstz account create
-jstz bridge deposit --from bootstrap1 --to tz1dA4FHF1Yv5tneZAAMFGtmt1vyJdELhjcd --amount 10000000
+jstz bridge deposit --from bootstrap1 --to tz1aoYjbTK7HKAynaE3C4qXGCLmekKZwgF9y --amount 10000000
 ```
 
 5. call
 
 ```
-jstz run tezos://tz1gpuyvBotqNRQoPPstGmzAWLG4eomTyBL8/ --data '{"message":"Please, give me some tez."}'
+jstz run tezos://tz1Uiua5SyiY6wQQgmKjeHaBn9kEotVCTquY/ --data '{"message":"Please, give me some tez."}'
 
 
 ```
@@ -56,3 +58,9 @@ import { Jstz, User } from "@jstz-dev/sdk";
 - just simple example from scratch with default mandatory stuff ? (typing deps, vite config deps, etc ...)
 - improve npm package publication because it is not on npm repo and not possible with a git link too. Need to compile and do a relative path, rn (i.e install nix and build it)
 - problem with mnemonic and accounts
+- Host networking is supported on Docker Desktop version 4.34 and later. To enable this feature:
+    Sign in to your Docker account in Docker Desktop.
+    Navigate to Settings.
+    Under the Resources tab, select Network.
+    Check the Enable host networking option.
+    Select Apply and restart.
