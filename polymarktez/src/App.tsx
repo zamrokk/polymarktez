@@ -4,21 +4,18 @@ import './App.css'
 
 import { Jstz, User } from "@jstz-dev/sdk";
 
-import { TezosToolkit } from '@taquito/taquito'
-import { InMemorySigner } from '@taquito/signer'
 import { Buffer } from 'buffer/'
-const Tezos = new TezosToolkit('https://ghostnet.ecadinfra.com');
-
-
 
 const DEFAULT_ENDPOINT = "localhost:8933";
 const DEFAULT_URI = "tezos://tz1iLrb3CbYjuBQBvhKGj5SpuyXAjzK63Jps";
+
+/*
 const USER_ALICE = {
   address: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
   publicKey: "edpkvGfYw3LyB1UcCahKQk4rF2tvbMUk8GFiTuMjL75uGXrpvKXhjn",
   secretKey: "edsk3QoqBuvdamxouPhin7swCvkQNgq4jP5KZPbwWNnwdZpSpJiEbq"
 };
-
+*/
 
 const USER_TAQUITO = {
   address: "tz1eVqP1XNL9SCrrgkXgV5ZcteSULwiykDZ8",
@@ -26,7 +23,7 @@ const USER_TAQUITO = {
   secretKey: "edsk3wHLmZQf7M3zQGENjpNEfFbAnpDyudJjM4aDmKc6TLYK8SuCjY"
 }
 
-
+/*
 const SignUp: React.FC<{ addUser: (name: string, user: User) => void }> = ({
   addUser,
 }) => {
@@ -79,7 +76,7 @@ const SignUp: React.FC<{ addUser: (name: string, user: User) => void }> = ({
     </div>
   );
 };
-
+*/
 const Ping: React.FC<{ endpoint: string; user: User, setError: (s: string) => void }> = ({
   endpoint,
   user,
