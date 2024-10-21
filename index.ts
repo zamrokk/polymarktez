@@ -1,7 +1,7 @@
 const handler = async (request: Request): Promise<Response> => {
 
     //DEBUG
-    console.log("handler", "JSON.stringify(request)");
+    console.log("handler request", JSON.stringify(request));
 
     // Extract the requester's address and message from the request
     const requester = request.headers.get("Referer") as Address;
@@ -14,13 +14,12 @@ const handler = async (request: Request): Promise<Response> => {
                 console.log("Hello from runner smart function 👋");
                 return new Response("Pong");
 
-
-
             case "/bet":
                 if (request.method === "POST") {
                     const bet = await request.json();
 
                     console.log(bet);
+                    return new Response();
 
                 } else {
                     const error = "/bet is a POST request";

@@ -32,6 +32,17 @@ jstz run tezos://tz1iLrb3CbYjuBQBvhKGj5SpuyXAjzK63Jps/ping -n dev
 
 ```
 
+6. Test
+
+To deploy and run, execute:
+
+```sh
+npm run build:test
+fa2=tz1...
+jstz deploy dist/test.index.js
+scenario=tz1...
+jstz run "tezos://$scenario/?fa2=$fa2"
+
 
 ## frontend
 

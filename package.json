@@ -8,9 +8,15 @@
     "@jstz-dev/jstz": "^0.0.0"
   },
   "devDependencies": {
-    "esbuild": "^0.20.2"
+    "@types/jest": "^29.5.13",
+    "esbuild": "^0.20.2",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
   },
   "scripts": {
-    "build": "esbuild index.ts --bundle --format=esm --target=esnext --minify --outfile=dist/index.js"
+    "build": "esbuild index.ts --bundle --format=esm --target=esnext --minify --outfile=dist/index.js",
+    "test": "jest index.test.ts"
   }
 }

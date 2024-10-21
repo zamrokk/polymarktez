@@ -2,12 +2,12 @@ import { useState } from 'react'
 
 import './App.css'
 
-import { Jstz, User } from "@jstz-dev/sdk";
+import { Jstz, JstzHeaders, User } from "@jstz-dev/sdk";
 
 import { Buffer } from 'buffer/'
 
 const DEFAULT_ENDPOINT = "localhost:8933";
-const DEFAULT_URI = "tezos://tz1iLrb3CbYjuBQBvhKGj5SpuyXAjzK63Jps";
+const DEFAULT_URI = "tezos://tz1W9kR2xHS2B6Pv3WURnMECy5WtxbkYmxSJ";
 
 /*
 const USER_ALICE = {
@@ -129,15 +129,20 @@ const BetFunction: React.FC<{ endpoint: string; user: User, setError: (s: string
         amount
       }));
 
-      const result = await new Jstz(endpoint).run(user, {
-        uri: uri,
-        method: "POST",
-        headers: { "Content-type": "application/json" },
-        body: Buffer.from(JSON.stringify({
-          option,
-          amount
-        }))
-      });
+
+      const headers: JstzHeaders = { "Content-Type": "application/json" };
+
+      const result = await new Jstz(endpoint).run(user,
+        {
+          uri,
+          method: "POST",
+          headers: headers,
+          body: new Buffer(JSON.stringify({
+            option,
+            amount
+          }))
+        }
+      );
       setFunctionResult(result.statusCode);
       if (result.statusCode != 200) {
         const error = Buffer.from(result.body).toString();
