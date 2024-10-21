@@ -124,9 +124,18 @@ const BetFunction: React.FC<{ endpoint: string; user: User, setError: (s: string
 
   const runFunction = async () => {
     try {
+
+
+
+      console.log("**********", JSON.stringify({
+        option,
+        amount
+      }));
+
       const result = await new Jstz(endpoint).run(user, {
         uri: uri,
         method: "POST",
+        headers: { "Content-type": "application/json" },
         body: Buffer.from(JSON.stringify({
           option,
           amount
