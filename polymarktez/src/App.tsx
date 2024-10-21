@@ -6,11 +6,13 @@ import { Jstz, User } from "@jstz-dev/sdk";
 
 import { TezosToolkit } from '@taquito/taquito'
 import { InMemorySigner } from '@taquito/signer'
+import { Buffer } from 'buffer/'
 const Tezos = new TezosToolkit('https://ghostnet.ecadinfra.com');
 
 
 
 const DEFAULT_ENDPOINT = "localhost:8933";
+const DEFAULT_URI = "tezos://tz1iLrb3CbYjuBQBvhKGj5SpuyXAjzK63Jps";
 const USER_ALICE = {
   address: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
   publicKey: "edpkvGfYw3LyB1UcCahKQk4rF2tvbMUk8GFiTuMjL75uGXrpvKXhjn",
@@ -19,9 +21,9 @@ const USER_ALICE = {
 
 
 const USER_TAQUITO = {
-  address: "tz1aoYjbTK7HKAynaE3C4qXGCLmekKZwgF9y",
-  publicKey: "edpkuaP71Z483V1mHFFSKivDwshyW4Ac5kwbscMyXBHd2zksEUKHnF",
-  secretKey: "3BhDJsDXyZQUtu1cbXDyLBiavv1Av6Gh9qBvih88d5mGnR6wP21dSXk"
+  address: "tz1eVqP1XNL9SCrrgkXgV5ZcteSULwiykDZ8",
+  publicKey: "edpkvUyfMw7iPYYtc4Pg6d1JzupazvreB6KVgAB8V7Gm59vZbKsuQo",
+  secretKey: "edsk3wHLmZQf7M3zQGENjpNEfFbAnpDyudJjM4aDmKc6TLYK8SuCjY"
 }
 
 
@@ -78,18 +80,18 @@ const SignUp: React.FC<{ addUser: (name: string, user: User) => void }> = ({
   );
 };
 
-const RunSmartFunction: React.FC<{ endpoint: string; user: User, setError: (s: string) => void }> = ({
+const Ping: React.FC<{ endpoint: string; user: User, setError: (s: string) => void }> = ({
   endpoint,
   user,
   setError
 }) => {
-  const [uri, setUri] = useState("tz1Uiua5SyiY6wQQgmKjeHaBn9kEotVCTquY");
+  const [uri, setUri] = useState(DEFAULT_URI);
   const [functionResult, setFunctionResult] = useState(0);
 
-  const runFunction = async () => {
+  const ping = async () => {
     try {
-      const result = await new Jstz(endpoint).run(user, { uri });
-      setFunctionResult(result.statusCode);
+      const result = await new Jstz(endpoint).run(user, { uri: uri + "/ping" });
+      setFunctionResult(result.statusCode == 200 && Buffer.from(result.body).toString().toLowerCase() == "pong" ? 200 : result.statusCode);
     } catch (error) {
       console.error("ERROR", error);
       setError(typeof error === "string" ? error : (error as Error).message + "\n" + (error as Error).stack);
@@ -99,7 +101,7 @@ const RunSmartFunction: React.FC<{ endpoint: string; user: User, setError: (s: s
 
   return (
     <span style={{ alignContent: "center", paddingLeft: 100 }}>
-      <button onClick={runFunction}>Refresh backend status ({uri})</button>
+      <button onClick={ping}>Ping {uri}</button>
       {functionResult == 200 ? <>&#128994;</> : <>&#128308;</>}
     </span>
   );
@@ -112,7 +114,7 @@ const BetFunction: React.FC<{ endpoint: string; user: User, setError: (s: string
   user,
   setError
 }) => {
-  const [uri, setUri] = useState("tz1Uiua5SyiY6wQQgmKjeHaBn9kEotVCTquY" + "/bet");
+  const [uri, setUri] = useState(DEFAULT_URI + "/bet");
   const [functionResult, setFunctionResult] = useState(0);
 
 
@@ -122,10 +124,24 @@ const BetFunction: React.FC<{ endpoint: string; user: User, setError: (s: string
 
   const runFunction = async () => {
     try {
-      const result = await new Jstz(endpoint).run(user, { uri: uri + "?option=" + option + "&quantity=" + amount });
+      const result = await new Jstz(endpoint).run(user, {
+        uri: uri,
+        method: "POST",
+        body: Buffer.from(JSON.stringify({
+          option,
+          amount
+        }))
+      });
       setFunctionResult(result.statusCode);
+      if (result.statusCode != 200) {
+        const error = Buffer.from(result.body).toString();
+        setError(error);
+        console.log(error);
+        setFunctionResult(result.statusCode);
+      }
     } catch (error) {
       console.error("ERROR", error);
+      setFunctionResult(0);
       setError(typeof error === "string" ? error : (error as Error).message + "\n" + (error as Error).stack);
     }
 
@@ -170,7 +186,7 @@ function App() {
       <header >
         <span style={{ display: "flex" }}>
           <h1>Polymarktez </h1>
-          <RunSmartFunction endpoint={DEFAULT_ENDPOINT} user={USER_TAQUITO} setError={setError} />
+
           <div style={{ alignContent: "flex-end", marginLeft: "auto" }}> Cash : ${balance}  <div className="chip">
             <img src="https://cdn.britannica.com/66/226766-138-235EFD92/who-is-President-Joe-Biden.jpg?w=800&h=450&c=crop" alt="Person" width="96" height="96" />
             Joe Biden
@@ -240,10 +256,15 @@ function App() {
 
       <footer>
 
+        <h3>Errors</h3>
+
         <textarea readOnly rows={10} style={{ width: "100%" }} value={error}>
 
 
         </textarea>
+
+        <Ping endpoint={DEFAULT_ENDPOINT} user={USER_TAQUITO} setError={setError} />
+
 
       </footer>
 
