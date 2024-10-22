@@ -28,7 +28,7 @@ more ~/.jstz/config.json
 
 ```
 jstz run tezos://tz1iLrb3CbYjuBQBvhKGj5SpuyXAjzK63Jps/ping -n dev
-
+jstz run tezos://tz1iLrb3CbYjuBQBvhKGj5SpuyXAjzK63Jps/init -n dev
 
 ```
 

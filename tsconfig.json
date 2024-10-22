@@ -9,10 +9,12 @@
     "moduleResolution": "node",
     "types": [
       "@jstz-dev/types",
-      "jest"
-    ]
+      "jest",
+    ],
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
   },
   "exclude": [
     "node_modules"
-  ]
+  ],
 }

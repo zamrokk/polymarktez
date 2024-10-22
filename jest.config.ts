@@ -1,10 +1,14 @@
 // jest.config.ts
+
 import { createDefaultEsmPreset, type JestConfigWithTsJest } from 'ts-jest'
 
-const jestConfig: JestConfigWithTsJest = {
-  // [...]
-  ...createDefaultEsmPreset(),
-}
 
+console.log("**********************************");
+
+const jestConfig: JestConfigWithTsJest = {
+  ...createDefaultEsmPreset({
+    //tsconfig: "./tsconfig.test.json"
+  }),
+}
 
 export default jestConfig

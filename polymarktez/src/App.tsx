@@ -15,6 +15,12 @@ const USER_ALICE = {
   publicKey: "edpkvGfYw3LyB1UcCahKQk4rF2tvbMUk8GFiTuMjL75uGXrpvKXhjn",
   secretKey: "edsk3QoqBuvdamxouPhin7swCvkQNgq4jP5KZPbwWNnwdZpSpJiEbq"
 };
+
+const USER_BOB = {
+  address: "tz1aSkwEot3L2kmUvcoxzjMomb9mvBNuzFK6",
+  publicKey: "edpkurPsQ8eUApnLUJ9ZPDvu98E8VNj4KtJa1aZr16Cr5ow5VHKnz4",
+  secretKey: "edsk3RFfvaFaxbHx8BMtEW1rKQcPtDML3LXjNqMNLCzC3wLC1bWbAt"
+};
 */
 
 const USER_TAQUITO = {
@@ -122,13 +128,10 @@ const BetFunction: React.FC<{ endpoint: string; user: User, setError: (s: string
   const runFunction = async () => {
     try {
 
-
-
-      console.log("**********", JSON.stringify({
+      const body = {
         option,
         amount
-      }));
-
+      };
 
       const headers: JstzHeaders = { "Content-Type": "application/json" };
 
@@ -137,10 +140,8 @@ const BetFunction: React.FC<{ endpoint: string; user: User, setError: (s: string
           uri,
           method: "POST",
           headers: headers,
-          body: new Buffer(JSON.stringify({
-            option,
-            amount
-          }))
+          body: Buffer.from(JSON.stringify(body))
+
         }
       );
       setFunctionResult(result.statusCode);
