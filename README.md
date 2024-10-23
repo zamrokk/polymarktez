@@ -37,11 +37,8 @@ jstz run tezos://tz1iLrb3CbYjuBQBvhKGj5SpuyXAjzK63Jps/init -n dev
 To deploy and run, execute:
 
 ```sh
-npm run build:test
-fa2=tz1...
-jstz deploy dist/test.index.js
-scenario=tz1...
-jstz run "tezos://$scenario/?fa2=$fa2"
+npm run test
+```
 
 
 ## frontend
@@ -64,7 +61,6 @@ import { Jstz, User } from "@jstz-dev/sdk";
 ## notes
 
 - 11/10/2024 : installing NPM on Ubuntu 24.04.1 LTS . npm -v => 9.2.0 . On doc it says : npm (>= 9.6.7)
-- pass grammarly on the .md documentation ! ex : recieved
 - controller, it would be great to have something siimilar to nestjs annotations => less code, better readibility : https://docs.nestjs.com/controllers#routing
 - how to login with wallet ?
 - just simple example from scratch with default mandatory stuff ? (typing deps, vite config deps, etc ...)

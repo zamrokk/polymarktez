@@ -187,7 +187,6 @@ const BetFunction: React.FC<{ endpoint: string; user: User, setError: (s: string
 };
 
 
-
 function App() {
   const [count, setCount] = useState(0);
   const [error, setError] = useState("");

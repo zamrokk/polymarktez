@@ -1,7 +1,7 @@
 import { match, P } from "ts-pattern";
 
 //******************* types
-type Bet = {
+export type Bet = {
     id: string;
     owner: Address;
     option: string;
