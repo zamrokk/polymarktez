@@ -1,7 +1,7 @@
 
 import { JstzHeaders } from '../jstz/packages/sdk';
 import { expect, jest, test } from '@jest/globals';
-import contract from './index';
+import contract, { BET_RESULT } from './index';
 
 const alice: Address = "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb";
 const bob: Address = "tz1aSkwEot3L2kmUvcoxzjMomb9mvBNuzFK6";
@@ -206,3 +206,40 @@ describe('bet function', () => {
 });
 
 
+
+const resultRequest = new Request(
+    "tezos://fake/result");
+
+const resultOnRequest = (option: string, result: BET_RESULT) => new Request(
+    "tezos://fake/result"
+    , {
+        method: "POST",
+        body: JSON.stringify({
+            option,
+            result
+        }),
+        headers: headers
+    }
+);
+
+
+describe('result function', () => {
+
+
+
+    test('should return 200', async () => {
+
+        const res = await contract(resultOnRequest("trump", BET_RESULT.WIN));
+        expect(res.status).toBe(200);
+    });
+
+    test('should have state finalized', async () => {
+        const res = await contract(resultRequest);
+        expect(res.status).toBe(200);
+        const body = await res.json();
+        expect(body).not.toBeNull();
+        expect(body.result).toEqual(BET_RESULT.WIN);
+    });
+
+
+});

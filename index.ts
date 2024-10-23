@@ -8,14 +8,14 @@ type Bet = {
     amount: number;
 };
 
-enum BET_RESULT {
+export enum BET_RESULT {
     'WIN' = 'WIN',
     'DRAW' = 'DRAW',
     'PENDING' = 'PENDING'
 }
 
 //******************* state keys
-enum KEYS {
+export enum KEYS {
     "FEES" = "FEES",
     "BETMAP" = "BETMAP",
     "RESULT" = "RESULT",
@@ -81,7 +81,7 @@ const resolveResult = (user: Address, optionResult: string, result: BET_RESULT):
             console.log("earnings : " + earnings + " for " + bet.owner)
             Ledger.transfer(bet.owner, earnings);
         } else if (result === BET_RESULT.DRAW) { //GIVE BACK MONEY - FEES
-            console.log("give bacl money : " + bet.amount * (1 - fees) + " for " + bet.owner)
+            console.log("give back money : " + bet.amount * (1 - fees) + " for " + bet.owner)
             Ledger.transfer(bet.owner, bet.amount * (1 - fees));
         } else { //ERROR
             const errorMessage = "Only give winners or draw, not losers";
@@ -89,6 +89,8 @@ const resolveResult = (user: Address, optionResult: string, result: BET_RESULT):
             return new Response(errorMessage, { status: 403 });
         }
     });
+
+    Kv.set(KEYS.RESULT, result);
 
     return new Response();
 }
@@ -186,7 +188,7 @@ const handler = async (request: Request): Promise<Response> => {
                     return resolveResult(user, body.option, body.result);
                 }
                 else if (request.method === "GET") {
-                    return new Response(Kv.get<BET_RESULT>(KEYS.RESULT)!);
+                    return new Response(JSON.stringify({ result: Kv.get<BET_RESULT>(KEYS.RESULT)! }));
                 }
                 else {
                     const error = "/result is a GET or POST request";
