@@ -78,17 +78,21 @@ const betPUSHRequest = new Request(
 const betRequest = new Request(
     "tezos://fake/bet");
 
-const betTrump1Request = new Request(
+const betOnRequest = (option: string, amount: number) => new Request(
     "tezos://fake/bet"
     , {
         method: "POST",
         body: JSON.stringify({
-            option: "trump",
-            amount: 1
+            option,
+            amount
         }),
         headers: headers
     }
 );
+
+
+
+
 
 const findBetRequest = (betId: string) => new Request(
     "tezos://fake/bet/" + betId
@@ -98,9 +102,19 @@ const findBetRequest = (betId: string) => new Request(
     }
 );
 
+
+const getOddsRequest = (option: string, betAmount: number) => new Request(
+    "tezos://fake/odds?option=" + option + "&amount=" + betAmount
+    , {
+        method: "GET",
+        headers: headers
+    }
+);
+
 describe('bet function', () => {
 
     let betTrump1Id: string = "";
+    let betKamala2Id: string = "";
 
     test('should fail with a PUSH', async () => {
         const res = await contract(betPUSHRequest);
@@ -118,7 +132,11 @@ describe('bet function', () => {
 
 
     test('should return 200', async () => {
-        const res = await contract(betTrump1Request);
+
+        //FIXME : manually send money to the contract
+        balances.set(contractAddr, balances.get(contractAddr)! + 1);
+
+        const res = await contract(betOnRequest("trump", 1));
         expect(res.status).toBe(200);
         const body = (await res.json());
         expect(body).not.toBeNull();
@@ -131,10 +149,59 @@ describe('bet function', () => {
         expect(res.status).toBe(200);
         const body = await res.json();
         expect(body).not.toBeNull();
-        // expect(body.owner).toEqual("tz1xxxx"); //FIXME how to do this ?
+        expect(body.owner).toEqual(alice);
         expect(body.option).toEqual("trump");
         expect(body.amount).toEqual(1);
     });
+
+    test('should get a correct odd of 0.9 (including fees)', async () => {
+        const res = await contract(getOddsRequest("trump", 1));
+        expect(res.status).toBe(200);
+        const body = await res.json();
+        expect(body).not.toBeNull();
+        expect(body.odds).toEqual(0.9);
+    });
+
+
+    test('should return 200', async () => {
+
+        //FIXME : manually send money to the contract
+        balances.set(contractAddr, balances.get(contractAddr)! + 2);
+
+        const res = await contract(betOnRequest("kamala", 2));
+        expect(res.status).toBe(200);
+        const body = (await res.json());
+        expect(body).not.toBeNull();
+        expect(body.id).not.toBeNull();
+        betKamala2Id = body.id;
+    });
+
+    test('should find the bet', async () => {
+        const res = await contract(findBetRequest(betKamala2Id));
+        expect(res.status).toBe(200);
+        const body = await res.json();
+        expect(body).not.toBeNull();
+        expect(body.owner).toEqual(alice);
+        expect(body.option).toEqual("kamala");
+        expect(body.amount).toEqual(2);
+    });
+
+    test('should get a correct odd of 1.9 for trump (including fees)', async () => {
+        const res = await contract(getOddsRequest("trump", 1));
+        expect(res.status).toBe(200);
+        const body = await res.json();
+        expect(body).not.toBeNull();
+        expect(body.odds).toEqual(1.9);
+    });
+
+    test('should get a correct odd of 1.23333 for kamala (including fees)', async () => {
+        const res = await contract(getOddsRequest("kamala", 1));
+        expect(res.status).toBe(200);
+        const body = await res.json();
+        expect(body).not.toBeNull();
+        expect(body.odds).toEqual(1 + 1 / 3 - 0.1);
+    });
+
 
 });
 
