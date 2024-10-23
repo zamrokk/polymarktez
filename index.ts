@@ -70,23 +70,25 @@ const resolveResult = (user: Address, optionResult: string, result: BET_RESULT):
         return new Response(errorMessage, { status: 500 });
     }
 
+    if (result !== BET_RESULT.WIN && optionResult !== BET_RESULT.DRAW) {
+        const errorMessage = "Only give winners or draw, no other choices";
+        console.error(errorMessage);
+        return new Response(errorMessage, { status: 500 });
+    }
+
     const bets = Kv.get<Map<string, Bet>>(KEYS.BETMAP)!;
 
     bets.forEach(bet => {
-        //remove bet
-        bets.delete(bet.id);
         const fees = Kv.get<number>(KEYS.FEES)!;
         if (result === BET_RESULT.WIN && bet.option === optionResult) {//WINNER!
-            const earnings = bet.amount * calculateOdds(bet.option, 0); //TODO : CHECKTHIS
+            const earnings = bet.amount * calculateOdds(bet.option, 0);
             console.log("earnings : " + earnings + " for " + bet.owner)
             Ledger.transfer(bet.owner, earnings);
         } else if (result === BET_RESULT.DRAW) { //GIVE BACK MONEY - FEES
             console.log("give back money : " + bet.amount * (1 - fees) + " for " + bet.owner)
             Ledger.transfer(bet.owner, bet.amount * (1 - fees));
-        } else { //ERROR
-            const errorMessage = "Only give winners or draw, not losers";
-            console.error(errorMessage);
-            return new Response(errorMessage, { status: 403 });
+        } else { //NEXT
+            console.log("bet lost for " + bet.owner)
         }
     });
 
@@ -101,9 +103,13 @@ const generateBetId = (): string => {
     return Math.random().toString(36).substr(2, 9);
 }
 
-const calculateOdds = (option: string, betAmount: number): number => {
-
-    if (betAmount === 0) return 0; //special case
+/**
+ * 
+ * @param option 
+ * @param betAmount (Optional) if user want to know the output gain after putting some money on it. Otherwise it gives actual gain without betting and influencing odds calculation 
+ * @returns 
+ */
+const calculateOdds = (option: string, betAmount?: number): number => {
 
     const bets = Kv.get<Map<string, Bet>>(KEYS.BETMAP)!;
     const fees = Kv.get<number>(KEYS.FEES)!;
@@ -111,7 +117,7 @@ const calculateOdds = (option: string, betAmount: number): number => {
 
     const totalLoserAmount = (Array.from(bets.values()).filter(bet => bet.option !== option).map(bet => bet.amount).reduce((acc, currentAmount) => acc + currentAmount, 0)) || 0;
     console.log("totalLoserAmount", totalLoserAmount);
-    const totalWinnerAmount = (Array.from(bets.values()).filter(bet => bet.option == option).map(bet => bet.amount).reduce((acc, currentAmount) => acc + currentAmount, betAmount)) || 0;
+    const totalWinnerAmount = (Array.from(bets.values()).filter(bet => bet.option == option).map(bet => bet.amount).reduce((acc, currentAmount) => acc + currentAmount, betAmount ? betAmount : 0)) || 0;
     console.log("totalWinnerAmount", totalWinnerAmount);
     return (1 + totalLoserAmount / totalWinnerAmount) - fees;
 }

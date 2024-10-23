@@ -7,20 +7,27 @@ const alice: Address = "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb";
 const bob: Address = "tz1aSkwEot3L2kmUvcoxzjMomb9mvBNuzFK6";
 const contractAddr: Address = "tz1iLrb3CbYjuBQBvhKGj5SpuyXAjzK63Jps";
 
-const headers: JstzHeaders = { "Content-Type": "application/json", "Referer": alice };
+const headers = (user: Address): HeadersInit => [["Content-Type", "application/json"], ["Referer", user]];
 
 //mock state
 globalThis.Kv = new Map();
 
 //mock Ledger
-
-const balances = new Map<Address, number>([[alice, 1000000], [bob, 100000], [contractAddr, 0]]);
+const initAmount = 1000000;
+const balances = new Map<Address, number>([[alice, initAmount], [bob, initAmount], [contractAddr, 0]]);
 const getBalances = (address: Address): number => balances.get(address)!;
 
 globalThis.Ledger = {
     selfAddress: contractAddr,
     balance: getBalances,
-    transfer: (address: Address, amount: Mutez): void => { console.log("Smart Function balance (before transfer) : " + balances.get(contractAddr)); console.log("Mocked transfer of " + amount + " to " + address); balances.set(contractAddr, balances.get(contractAddr)! - amount); console.log("Smart Function balance : " + balances.get(contractAddr)) }
+    transfer: (address: Address, amount: Mutez): void => {
+        console.log("Smart Function balance (before transfer) : " + balances.get(contractAddr));
+        console.log("Mocked transfer of " + amount + " to " + address);
+        balances.set(contractAddr, balances.get(contractAddr)! - amount);
+        balances.set(address, balances.get(address)! + amount);
+        console.log("Smart Function balance : " + balances.get(contractAddr))
+        console.log("Receiver balance : " + balances.get(contractAddr))
+    }
 }
 
 
@@ -40,7 +47,7 @@ describe('ping function', () => {
 // INIT
 const initRequest = new Request("tezos://fake/init",
     {
-        headers,
+        headers: headers(alice),
         method: "GET"
     });
 
@@ -70,7 +77,7 @@ const betPUSHRequest = new Request(
             option: "trump",
             amount: 1
         }),
-        headers: headers
+        headers: headers(alice)
     }
 );
 
@@ -78,7 +85,7 @@ const betPUSHRequest = new Request(
 const betRequest = new Request(
     "tezos://fake/bet");
 
-const betOnRequest = (option: string, amount: number) => new Request(
+const betOnRequest = (option: string, amount: number, user: Address) => new Request(
     "tezos://fake/bet"
     , {
         method: "POST",
@@ -86,7 +93,7 @@ const betOnRequest = (option: string, amount: number) => new Request(
             option,
             amount
         }),
-        headers: headers
+        headers: headers(user)
     }
 );
 
@@ -98,7 +105,7 @@ const findBetRequest = (betId: string) => new Request(
     "tezos://fake/bet/" + betId
     , {
         method: "GET",
-        headers: headers
+        headers: headers(alice)
     }
 );
 
@@ -107,7 +114,7 @@ const getOddsRequest = (option: string, betAmount: number) => new Request(
     "tezos://fake/odds?option=" + option + "&amount=" + betAmount
     , {
         method: "GET",
-        headers: headers
+        headers: headers(alice)
     }
 );
 
@@ -136,7 +143,7 @@ describe('bet function', () => {
         //FIXME : manually send money to the contract
         balances.set(contractAddr, balances.get(contractAddr)! + 1);
 
-        const res = await contract(betOnRequest("trump", 1));
+        const res = await contract(betOnRequest("trump", 1, alice));
         expect(res.status).toBe(200);
         const body = (await res.json());
         expect(body).not.toBeNull();
@@ -168,7 +175,8 @@ describe('bet function', () => {
         //FIXME : manually send money to the contract
         balances.set(contractAddr, balances.get(contractAddr)! + 2);
 
-        const res = await contract(betOnRequest("kamala", 2));
+        //change to bob requester
+        const res = await contract(betOnRequest("kamala", 2, bob));
         expect(res.status).toBe(200);
         const body = (await res.json());
         expect(body).not.toBeNull();
@@ -181,7 +189,7 @@ describe('bet function', () => {
         expect(res.status).toBe(200);
         const body = await res.json();
         expect(body).not.toBeNull();
-        expect(body.owner).toEqual(alice);
+        expect(body.owner).toEqual(bob);
         expect(body.option).toEqual("kamala");
         expect(body.amount).toEqual(2);
     });
@@ -218,7 +226,7 @@ const resultOnRequest = (option: string, result: BET_RESULT) => new Request(
             option,
             result
         }),
-        headers: headers
+        headers: headers(alice)
     }
 );
 
@@ -227,10 +235,15 @@ describe('result function', () => {
 
 
 
-    test('should return 200', async () => {
+    test('should return 200 with all correct balances', async () => {
 
         const res = await contract(resultOnRequest("trump", BET_RESULT.WIN));
         expect(res.status).toBe(200);
+
+        expect(balances.get(contractAddr)).toBeCloseTo(0.1, 5);
+        expect(balances.get(alice)).toBeCloseTo(initAmount + 2.9, 5);
+        expect(balances.get(bob)).toBeCloseTo(initAmount + 0, 5);
+
     });
 
     test('should have state finalized', async () => {
@@ -239,6 +252,13 @@ describe('result function', () => {
         const body = await res.json();
         expect(body).not.toBeNull();
         expect(body.result).toEqual(BET_RESULT.WIN);
+    });
+
+    test('should return 500 if we try to reapply results', async () => {
+
+        const res = await contract(resultOnRequest("trump", BET_RESULT.WIN));
+        expect(res.status).toBe(500);
+
     });
 
 
