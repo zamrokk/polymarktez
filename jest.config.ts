@@ -3,11 +3,9 @@
 import { createDefaultEsmPreset, type JestConfigWithTsJest } from 'ts-jest'
 
 
-console.log("**********************************");
-
 const jestConfig: JestConfigWithTsJest = {
   ...createDefaultEsmPreset({
-    //tsconfig: "./tsconfig.test.json"
+    //FIXME Hacks to fix Jest/Jstz do not work tsconfig: "./tsconfig.test.json"
   }),
 }
 

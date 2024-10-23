@@ -1,12 +1,29 @@
 
 import { JstzHeaders } from '../jstz/packages/sdk';
-
+import { expect, jest, test } from '@jest/globals';
 import contract from './index';
 
 const alice: Address = "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb";
 const bob: Address = "tz1aSkwEot3L2kmUvcoxzjMomb9mvBNuzFK6";
+const contractAddr: Address = "tz1iLrb3CbYjuBQBvhKGj5SpuyXAjzK63Jps";
 
 const headers: JstzHeaders = { "Content-Type": "application/json", "Referer": alice };
+
+//mock state
+globalThis.Kv = new Map();
+
+//mock Ledger
+
+const balances = new Map<Address, number>([[alice, 1000000], [bob, 100000], [contractAddr, 0]]);
+const getBalances = (address: Address): number => balances.get(address)!;
+
+globalThis.Ledger = {
+    selfAddress: contractAddr,
+    balance: getBalances,
+    transfer: (address: Address, amount: Mutez): void => { console.log("Smart Function balance (before transfer) : " + balances.get(contractAddr)); console.log("Mocked transfer of " + amount + " to " + address); balances.set(contractAddr, balances.get(contractAddr)! - amount); console.log("Smart Function balance : " + balances.get(contractAddr)) }
+}
+
+
 
 //PING
 const pingRequest = new Request("tezos://fake/ping");
@@ -94,7 +111,7 @@ describe('bet function', () => {
     test('should return a list of empty bets', async () => {
         const res = await contract(betRequest);
         expect(res.status).toBe(200);
-        const body = (await res.json());
+        const body = await res.json();
         expect(body).not.toBeNull();
         expect(body).toEqual([]);
     });
@@ -112,7 +129,7 @@ describe('bet function', () => {
     test('should find the bet', async () => {
         const res = await contract(findBetRequest(betTrump1Id));
         expect(res.status).toBe(200);
-        const body = (await res.json());
+        const body = await res.json();
         expect(body).not.toBeNull();
         // expect(body.owner).toEqual("tz1xxxx"); //FIXME how to do this ?
         expect(body.option).toEqual("trump");

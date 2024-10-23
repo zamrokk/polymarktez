@@ -1,3 +1,4 @@
+import { match, P } from "ts-pattern";
 
 //******************* types
 type Bet = {
@@ -102,9 +103,9 @@ const calculateOdds = (option: string, betAmount: number): number => {
     const bets = Kv.get<Map<string, Bet>>(KEYS.BETMAP)!;
     const fees = Kv.get<number>(KEYS.FEES)!;
 
-    const totalLoserAmount = (Array.from(bets.values().filter(bet => bet.option !== option).map(bet => bet.amount)).reduce((acc, currentAmount) => acc + currentAmount) / Ledger.balance(Ledger.selfAddress));
+    const totalLoserAmount = (Array.from(bets.values()).filter(bet => bet.option !== option).map(bet => bet.amount).reduce((acc, currentAmount) => acc + currentAmount, 0) / Ledger.balance(Ledger.selfAddress)) || 0;
     console.log("totalLoserAmount", totalLoserAmount);
-    const totalWinnerAmount = (Array.from(bets.values().filter(bet => bet.option == option).map(bet => bet.amount)).reduce((acc, currentAmount) => acc + currentAmount) / Ledger.balance(Ledger.selfAddress), betAmount);
+    const totalWinnerAmount = (Array.from(bets.values()).filter(bet => bet.option == option).map(bet => bet.amount).reduce((acc, currentAmount) => acc + currentAmount, 0) / Ledger.balance(Ledger.selfAddress), betAmount) || 0;
     console.log("totalWinnerAmount", totalWinnerAmount);
     return (1 + totalLoserAmount / totalWinnerAmount) - fees;
 }
@@ -112,17 +113,20 @@ const calculateOdds = (option: string, betAmount: number): number => {
 const handler = async (request: Request): Promise<Response> => {
 
     //DEBUG
-    console.log("handler request", JSON.stringify(request));
+    //console.debug("handler request", request);
 
     // Extract the requester's address and message from the request
     const user = request.headers.get("Referer") as Address;
     const url = new URL(request.url);
     const path = url.pathname;
 
+    const pathCutArr = path.replace("/", "").split("/"); //remove first /, then split
+
+
     try {
-        switch (path) {
+        return match(pathCutArr)
             //FIXME : not possible to initialize the State at deployment time for now
-            case "/init":
+            .with(["init"], () => {
                 if (Kv.has(KEYS.RESULT)) {
                     const error = "State already initialized";
                     console.error(error);
@@ -137,18 +141,19 @@ const handler = async (request: Request): Promise<Response> => {
                     Kv.set(KEYS.ADMIN, referer);
                     return new Response();
                 }
-            case "/ping":
+            })
+            .with(["ping"], () => {
                 console.log("Hello from runner smart function 👋");
                 return new Response("Pong");
-
-            case "/bet":
+            })
+            .with(["bet"], async () => {
                 if (request.method === "POST") {
                     const bet = await request.json();
                     console.log("user", user, "bet", bet); //FIXEM : need to extract the amount and remove it from bet.amount on teh param call below 
                     return placeBet(user, bet.option, bet.amount, calculateOdds(bet.option, bet.amount));
                 }
                 else if (request.method === "GET") {
-                    return new Response(Array.from(Kv.get<Map<string, Bet>>(KEYS.BETMAP)!.values()).toString());
+                    return new Response(JSON.stringify(Array.from(Kv.get<Map<string, Bet>>(KEYS.BETMAP)!.values())));
                 }
                 else {
                     const error = "/bet is a GET or POST request";
@@ -156,34 +161,45 @@ const handler = async (request: Request): Promise<Response> => {
                     return new Response(error, { status: 500 });
                 }
 
-            case "/result":
+            })
+            .with(["bet", P.string], async ([, betId]) => {
+
+                if (request.method === "GET") {
+                    return new Response(JSON.stringify(Array.from(Kv.get<Map<string, Bet>>(KEYS.BETMAP)!.values()).filter(bet => bet.id == betId)[0]));
+                }
+                else {
+                    const error = "/bet is a GET or POST request";
+                    console.error(error);
+                    return new Response(error, { status: 500 });
+                }
+            })
+
+            .with(["result"], async () => {
                 if (request.method === "POST") {
                     const body: { option: string, result: BET_RESULT } = await request.json();
                     console.log("user", user, "body", body);
                     return resolveResult(user, body.option, body.result);
                 }
                 else if (request.method === "GET") {
-                    const pattern = new URLPattern("http{s}?://*/result/:id");
-                    console.log("************ pattern.test", pattern.test(request.url));
-                    const match = pattern.exec(request.url);
-                    console.log("************ match", match);
-                    const betId = match?.pathname.groups.id
-                    return new Response(Array.from(Kv.get<Map<string, Bet>>(KEYS.BETMAP)!.values()).filter(bet => bet.id == betId).toString());
+                    return new Response(Kv.get<BET_RESULT>(KEYS.RESULT)!);
                 }
                 else {
                     const error = "/result is a GET or POST request";
                     console.error(error);
                     return new Response(error, { status: 500 });
                 }
-            default:
-                const error = `Unrecognised entrypoint ${path}`;
-                console.error(error);
+            })
+            .otherwise(() => {
+                const error = `Unrecognised parsed entrypoint ${pathCutArr.toString()}`;
+                console.error(error, pathCutArr);
                 return new Response(error, { status: 404 });
-        }
+            })
+
     } catch (error) {
         console.error(error);
         throw error;
     }
+
 }
 
 export default handler;
