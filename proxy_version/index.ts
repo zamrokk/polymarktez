@@ -1,5 +1,8 @@
 import { match, P } from "ts-pattern";
-import { KEYS, Bet, BET_RESULT } from "./index.types";
+import { BET_RESULT, KEYS, Bet } from "../index.types";
+
+
+export const ODDS_CONTRACT_ADDRESS = "ODDS_CONTRACT_ADDRESS";
 
 //******************* functions
 
@@ -32,7 +35,7 @@ const placeBet = (user: Address, selection: string, amount: number, odds: number
     return new Response(JSON.stringify({ id: betId }));
 }
 
-const resolveResult = (user: Address, optionResult: string, result: BET_RESULT): Response => {
+const resolveResult = async (user: Address, optionResult: string, result: BET_RESULT): Promise<Response> => {
 
     const admin = Kv.get<Address>(KEYS.ADMIN)!;
     if (user !== admin) {
@@ -56,10 +59,12 @@ const resolveResult = (user: Address, optionResult: string, result: BET_RESULT):
 
     const bets = Kv.get<Map<string, Bet>>(KEYS.BETMAP)!;
 
-    bets.forEach(bet => {
+    await Promise.all(Array.from(bets.values()).map(async (bet) => {
         const fees = Kv.get<number>(KEYS.FEES)!;
+        const oddResponse = await SmartFunction.call(
+            new Request("tezos://" + Kv.get(ODDS_CONTRACT_ADDRESS) + "/odds?option=" + bet.option + "&amount=" + 0));
         if (result === BET_RESULT.WIN && bet.option === optionResult) {//WINNER!
-            const earnings = bet.amount * calculateOdds(bet.option, 0);
+            const earnings = bet.amount * (await oddResponse.json()).odds;
             console.log("earnings : " + earnings + " for " + bet.owner)
             Ledger.transfer(bet.owner, earnings);
         } else if (result === BET_RESULT.DRAW) { //GIVE BACK MONEY - FEES
@@ -68,42 +73,18 @@ const resolveResult = (user: Address, optionResult: string, result: BET_RESULT):
         } else { //NEXT
             console.log("bet lost for " + bet.owner)
         }
-    });
+    }));
 
     Kv.set(KEYS.RESULT, result);
 
     return new Response();
 }
 
-
-
 const generateBetId = (): string => {
     return Math.random().toString(36).substr(2, 9);
 }
 
-/**
- * 
- * @param option 
- * @param betAmount (Optional) if user want to know the output gain after putting some money on it. Otherwise it gives actual gain without betting and influencing odds calculation 
- * @returns 
- */
-const calculateOdds = (option: string, betAmount?: number): number => {
-
-    const bets = Kv.get<Map<string, Bet>>(KEYS.BETMAP)!;
-    const fees = Kv.get<number>(KEYS.FEES)!;
-    const balance = Ledger.balance(Ledger.selfAddress);
-
-    const totalLoserAmount = (Array.from(bets.values()).filter(bet => bet.option !== option).map(bet => bet.amount).reduce((acc, currentAmount) => acc + currentAmount, 0)) || 0;
-    console.log("totalLoserAmount", totalLoserAmount);
-    const totalWinnerAmount = (Array.from(bets.values()).filter(bet => bet.option == option).map(bet => bet.amount).reduce((acc, currentAmount) => acc + currentAmount, betAmount ? betAmount : 0)) || 0;
-    console.log("totalWinnerAmount", totalWinnerAmount);
-    return (1 + totalLoserAmount / totalWinnerAmount) - fees;
-}
-
 const handler = async (request: Request): Promise<Response> => {
-
-    //DEBUG
-    //console.debug("handler request", request);
 
     // Extract the requester's address and message from the request
     const user = request.headers.get("Referer") as Address;
@@ -119,12 +100,15 @@ const handler = async (request: Request): Promise<Response> => {
             //FIXME : not possible to initialize the State at deployment time for now
             .with(["init"], () => {
                 if (Kv.has(KEYS.RESULT)) {
-                    const error = "State already initialized";
+                    const error = "State already initialized " + Kv.get(KEYS.RESULT);
                     console.error(error);
                     return new Response(error, { status: 500 });
                 } else {
                     const referer = request.headers.get("Referer");
                     console.log("Initializing smart function state from admin " + referer);
+
+                    //FIXME proxy stuff here
+                    Kv.set(ODDS_CONTRACT_ADDRESS, params.get(ODDS_CONTRACT_ADDRESS)!);
 
                     Kv.set(KEYS.FEES, 0.1);
                     Kv.set(KEYS.BETMAP, new Map<string, Bet>());
@@ -139,9 +123,13 @@ const handler = async (request: Request): Promise<Response> => {
             })
             .with(["bet"], async () => {
                 if (request.method === "POST") {
-                    const bet = await request.json();
+                    const bet: Bet = await request.json();
                     console.log("user", user, "bet", bet); //FIXEM : need to extract the amount and remove it from bet.amount on teh param call below 
-                    return placeBet(user, bet.option, bet.amount, calculateOdds(bet.option, bet.amount));
+                    const oddResponse = await SmartFunction.call(
+                        new Request(`tezos://${Kv.get("ODDS_CONTRACT_ADDRESS")!}/odds?option=` + bet.option + "&amount=" + bet.amount));
+                    return placeBet(user, bet.option, bet.amount,
+                        (await oddResponse.json()).odds
+                    );
                 }
                 else if (request.method === "GET") {
                     return new Response(JSON.stringify(Array.from(Kv.get<Map<string, Bet>>(KEYS.BETMAP)!.values())));
@@ -169,7 +157,7 @@ const handler = async (request: Request): Promise<Response> => {
                 if (request.method === "POST") {
                     const body: { option: string, result: BET_RESULT } = await request.json();
                     console.log("user", user, "body", body);
-                    return resolveResult(user, body.option, body.result);
+                    return await resolveResult(user, body.option, body.result);
                 }
                 else if (request.method === "GET") {
                     return new Response(JSON.stringify({ result: Kv.get<BET_RESULT>(KEYS.RESULT)! }));
@@ -180,16 +168,10 @@ const handler = async (request: Request): Promise<Response> => {
                     return new Response(error, { status: 500 });
                 }
             })
-            .with(["odds"], () => {
-
-                if (params.size != 2 || !params.get("option") || !params.get("amount") || request.method !== "GET") {
-                    const error = "GET method and option + amount parameters are mandatory";
-                    console.error(error);
-                    return new Response(error, { status: 500 });
-                } else {
-                    return new Response(JSON.stringify({ odds: calculateOdds(params.get("option")!, Number(params.get("amount")!)) }));
-                }
-
+            .with(["odds"], async () => {
+                //FIXME : HACK to call child contracts
+                return await SmartFunction.call(
+                    new Request("tezos://${Kv.get(" + ODDS_CONTRACT_ADDRESS + ")!}/odds?option=" + params.get("option") + "&amount=" + params.get("amount")));
 
             })
             .otherwise(() => {

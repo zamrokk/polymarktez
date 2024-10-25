@@ -18,6 +18,10 @@
   },
   "scripts": {
     "build": "esbuild index.ts --bundle --format=esm --target=esnext --minify --outfile=dist/index.js",
-    "test": "jest index.test.ts"
+    "build_proxy_version": "esbuild ./proxy_version/index.ts --bundle --format=esm --target=esnext --minify --outfile=dist/proxy_version/index.js && esbuild ./proxy_version/odds.ts --bundle --format=esm --target=esnext --minify --outfile=dist/proxy_version/odds.js ",
+    "build_chunkstorage_version": "esbuild ./chunkstorage_version/index.ts --platform=node --bundle --format=esm --target=esnext --minify --outfile=dist/chunkstorage_version/index.js  ",
+    "test": "jest --runTestsByPath index.test.ts",
+    "test_proxy_version": "jest --runTestsByPath ./proxy_version/index.test.ts",
+    "test_chunkstorage_version": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest  --runTestsByPath ./chunkstorage_version/index.test.ts"
   }
 }

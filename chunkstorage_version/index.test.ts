@@ -1,9 +1,9 @@
 
-import { JstzHeaders } from '../jstz/packages/sdk';
-import { expect, jest, test } from '@jest/globals';
-import contract from './index';
-import { BET_RESULT } from './index.types';
 
+import { expect, jest, test } from '@jest/globals';
+import contract, { KEYS_CODE } from './index';
+import { BET_RESULT } from '../index.types';
+import * as fs from 'fs';
 const alice: Address = "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb";
 const bob: Address = "tz1aSkwEot3L2kmUvcoxzjMomb9mvBNuzFK6";
 const contractAddr: Address = "tz1iLrb3CbYjuBQBvhKGj5SpuyXAjzK63Jps";
@@ -67,6 +67,37 @@ describe('init function', () => {
 });
 
 
+//FIXME
+
+const chunkRequest = async (filepath: string) => new Request("tezos://fake/chunk",
+    {
+        headers: [["Content-Type", "text/plain"], ["Referer", alice]],
+        method: "POST",
+        body: await fs.promises.readFile(filepath, 'utf8')
+    });
+
+describe('chunk function', () => {
+    test('should store chunk 1/3', async () => {
+        const res = await contract(await chunkRequest("./dist/index1.js"));
+        expect(res.status).toBe(200);
+    });
+
+
+    test('should store chunk 2/3', async () => {
+        const res = await contract(await chunkRequest("./dist/index2.js"));
+        expect(res.status).toBe(200);
+    });
+
+    test('should store chunk 3/3', async () => {
+        const res = await contract(await chunkRequest("./dist/index3.js"));
+        expect(res.status).toBe(200);
+        expect(Kv.get(KEYS_CODE)).not.toBeNull();
+    });
+
+
+
+});
+
 // BET SCENARIO
 
 
@@ -123,6 +154,7 @@ describe('bet function', () => {
 
     let betTrump1Id: string = "";
     let betKamala2Id: string = "";
+
 
     test('should fail with a PUSH', async () => {
         const res = await contract(betPUSHRequest);

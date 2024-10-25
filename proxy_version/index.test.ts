@@ -1,8 +1,9 @@
 
-import { JstzHeaders } from '../jstz/packages/sdk';
+import { JstzHeaders } from '../../jstz/packages/sdk';
 import { expect, jest, test } from '@jest/globals';
-import contract from './index';
-import { BET_RESULT } from './index.types';
+import contract, { ODDS_CONTRACT_ADDRESS } from './index';
+import oddContract from './odds';
+import { BET_RESULT } from '../index.types';
 
 const alice: Address = "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb";
 const bob: Address = "tz1aSkwEot3L2kmUvcoxzjMomb9mvBNuzFK6";
@@ -29,8 +30,13 @@ globalThis.Ledger = {
         console.log("Smart Function balance : " + balances.get(contractAddr))
         console.log("Receiver balance : " + balances.get(contractAddr))
     }
-}
+};
 
+
+globalThis.SmartFunction = {
+    create: async () => "",
+    call: async (request: Request) => oddContract(request)
+};
 
 
 //PING
@@ -45,8 +51,10 @@ describe('ping function', () => {
 });
 
 
+const oddContractAddress = "fakeodd";
+
 // INIT
-const initRequest = new Request("tezos://fake/init",
+const initRequest = new Request("tezos://fake/init?" + ODDS_CONTRACT_ADDRESS + "=" + oddContractAddress,
     {
         headers: headers(alice),
         method: "GET"

@@ -75,3 +75,50 @@ import { Jstz, User } from "@jstz-dev/sdk";
     Check the Enable host networking option.
     Select Apply and restart.
 - jstz logs trace : cannot exit with ctrl+C or D
+
+
+# CHUNK version for buil / deployment
+
+1. build the code to chunk
+
+```
+npm install
+npm run build
+```
+
+2. (manually) cut your code in chunks < 4Ko
+
+3. build the "interface" contract
+
+```
+npm run build_chunkstorage_version
+```
+
+4. Start sandbox and deploy the "interface" contract
+
+```
+jstz sandbox start
+jstz deploy dist/chunkstorage_version/index.js -n dev
+```
+
+5. (optional) send money to your buddy
+```
+jstz bridge deposit --from bootstrap1 --to tz1eVqP1XNL9SCrrgkXgV5ZcteSULwiykDZ8 --amount 100 -n dev
+```
+
+7. send the chunks
+
+```
+jstz run tezos://tz1e5JT4kjrLqHAbvieqFjK3NVgLZzPphLzt/chunk -n dev -t -r POST -d '{body: ${cat ./dist/index1.js}}'
+
+```
+
+6. ping, init storage
+
+```
+jstz run tezos://tz1e5JT4kjrLqHAbvieqFjK3NVgLZzPphLzt/ping -n dev
+jstz run tezos://tz1e5JT4kjrLqHAbvieqFjK3NVgLZzPphLzt/init -n dev
+```
+
+8. try a real call
+

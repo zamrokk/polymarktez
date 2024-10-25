@@ -8,6 +8,18 @@
             "type": "node-terminal"
         },
         {
+            "command": "npm run test_proxy_version ",
+            "name": "Run npm test_proxy_version",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
+            "command": "npm run test_chunkstorage_version --experimental-vm-modules",
+            "name": "Run npm test_chunkstorage_version --experimental-vm-modules",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
             "type": "firefox",
             "request": "launch",
             "name": "Launch firefox against localhost",
