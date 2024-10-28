@@ -140,8 +140,7 @@ const BetFunction: React.FC<{ endpoint: string; user: User, setError: (s: string
           uri,
           method: "POST",
           headers: headers,
-          body: Buffer.from(JSON.stringify(body))
-
+          body: Buffer.from(JSON.stringify(body)) //FIXME BUG HERE Json not deserialize correctly on JsTz node 
         }
       );
       setFunctionResult(result.statusCode);
