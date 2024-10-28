@@ -1,15 +1,26 @@
 name: CI
 on: push
 jobs: 
-  buildAndTest: 
+  build: 
     runs-on: ubuntu-latest
     steps: 
       - name: Check out repository code
         uses: actions/checkout@v3
-      - name: Use node to build project
+      - name: Use node
         uses: actions/setup-node@v4
         with:
             node-version: 18
       - run: npm ci
       - run: npm run build    
-      - run: npm test
+  test: 
+    needs: build
+    runs-on: ubuntu-latest
+    steps: 
+        - name: Check out repository code
+          uses: actions/checkout@v3
+        - name: Use node 
+          uses: actions/setup-node@v4
+          with:
+              node-version: 18
+        - run: npm ci   
+        - run: npm test
