@@ -43,8 +43,16 @@ jobs:
           id: deployment
           uses: nomadic-labs/tezosX-deploy@v0.0.1
           with:
-            sk: ${{ secrets.sk }}
-            file: "dist/index.js"
+            sk: ${{ secrets.SK }}
+            user: ${{ env.PKH }}
+            file: dist/index.js
             rpc: ${{ env.TEZOSX_URL }}
             balance: 0
+            gas-limit: 1000000
             name: polymarktez
+            runtime: jstz
+            instances: 2
+            memory: 256M
+            cpu: standard-1
+            region: eu
+            
