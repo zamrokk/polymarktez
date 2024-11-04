@@ -21,14 +21,14 @@ tz1eVqP1XNL9SCrrgkXgV5ZcteSULwiykDZ8
 
 jstz account create
 jstz bridge deposit --from bootstrap1 --to tz1eVqP1XNL9SCrrgkXgV5ZcteSULwiykDZ8 --amount 100
-more ~/.jstz/config.json 
+more ~/.jstz/config.json
 ```
 
 5. call
 
 ```
-jstz run tezos://tz1iLrb3CbYjuBQBvhKGj5SpuyXAjzK63Jps/ping -n dev
-jstz run tezos://tz1iLrb3CbYjuBQBvhKGj5SpuyXAjzK63Jps/init -n dev
+jstz run tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/ping -n dev
+jstz run tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/init -n dev
 
 ```
 
@@ -39,7 +39,6 @@ To deploy and run, execute:
 ```sh
 npm run test
 ```
-
 
 ## frontend
 
@@ -56,8 +55,6 @@ npm i  @jstz-dev/sdk@file:../../jstz/packages/sdk
 import { Jstz, User } from "@jstz-dev/sdk";
 ```
 
-
-
 ## notes
 
 - 11/10/2024 : installing NPM on Ubuntu 24.04.1 LTS . npm -v => 9.2.0 . On doc it says : npm (>= 9.6.7)
@@ -65,21 +62,20 @@ import { Jstz, User } from "@jstz-dev/sdk";
 - how to login with wallet ?
 - just simple example from scratch with default mandatory stuff ? (typing deps, vite config deps, etc ...)
 - improve npm package publication because it is not on npm repo and not possible with a git link too. Need to compile and do a relative path, rn (i.e install nix and build it)
-`alias jstz='docker run --rm -v "/tmp:/tmp" -v "$HOME/.jstz:/root/.jstz" -v "$PWD:$PWD" -w "$PWD" --network host -it ghcr.io/jstz-dev/jstz/jstz-cli:20241007'`
-- kill the config file if error : ` rm -rf ~/.jstz/config.json ` 
+  `alias jstz='docker run --rm -v "/tmp:/tmp" -v "$HOME/.jstz:/root/.jstz" -v "$PWD:$PWD" -w "$PWD" --network host -it ghcr.io/jstz-dev/jstz/jstz-cli:20241007'`
+- kill the config file if error : `rm -rf ~/.jstz/config.json`
 - problem with mnemonic and accounts
 - Host networking is supported on Docker Desktop version 4.34 and later. To enable this feature:
-    Sign in to your Docker account in Docker Desktop.
-    Navigate to Settings.
-    Under the Resources tab, select Network.
-    Check the Enable host networking option.
-    Select Apply and restart.
+  Sign in to your Docker account in Docker Desktop.
+  Navigate to Settings.
+  Under the Resources tab, select Network.
+  Check the Enable host networking option.
+  Select Apply and restart.
 - jstz logs trace : cannot exit with ctrl+C or D
-
 
 # CHUNK version for buil / deployment
 
-1. build the code to chunk
+1. build the code to test it is building fine
 
 ```
 npm install
@@ -88,7 +84,7 @@ npm run build
 
 2. (manually) cut your code in chunks < 4Ko
 
-3. build the "interface" contract
+3. build the "interface" contract that will be the one you deploy
 
 ```
 npm run build_chunkstorage_version
@@ -99,26 +95,43 @@ npm run build_chunkstorage_version
 ```
 jstz sandbox start
 jstz deploy dist/chunkstorage_version/index.js -n dev
+jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/ping" -n dev -t
 ```
 
 5. (optional) send money to your buddy
+
 ```
 jstz bridge deposit --from bootstrap1 --to tz1eVqP1XNL9SCrrgkXgV5ZcteSULwiykDZ8 --amount 100 -n dev
 ```
 
-7. send the chunks
-
-```
-jstz run tezos://tz1e5JT4kjrLqHAbvieqFjK3NVgLZzPphLzt/chunk -n dev -t -r POST -d '{body: ${cat ./dist/index1.js}}'
+6. Init, then we need to generate the chunks and send the chunks
 
 ```
 
-6. ping, init storage
+npm run chunk
+
+jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/init" -n dev -t
+jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/code" -n dev -t
+
+jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/chunk" -n dev -t -r POST -d $(< ./dist/part-1.txt)
+jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/chunk" -n dev -t -r POST -d $(< ./dist/part-2.txt)
+jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/chunk" -n dev -t -r POST -d $(< ./dist/part-3.txt)
+jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/chunk" -n dev -t -r POST -d $(< ./dist/part-4.txt)
+jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/chunk" -n dev -t -r POST -d $(< ./dist/part-5.txt)
+jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/chunk" -n dev -t -r POST -d ""
+
+jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/code" -n dev -t
+
+
+
 
 ```
-jstz run tezos://tz1e5JT4kjrLqHAbvieqFjK3NVgLZzPphLzt/ping -n dev
-jstz run tezos://tz1e5JT4kjrLqHAbvieqFjK3NVgLZzPphLzt/init -n dev
+
+7. try a real call
+
+
+
 ```
-
-8. try a real call
-
+jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/bet" -n dev -t -g 10000000
+jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/bet" -n dev -t -r POST -d '{"option":"trump","amount":1}'
+```

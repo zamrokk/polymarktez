@@ -18,5 +18,7 @@ export enum KEYS {
     "FEES" = "FEES",
     "BETMAP" = "BETMAP",
     "RESULT" = "RESULT",
-    "ADMIN" = "ADMIN"
+    "ADMIN" = "ADMIN",
+    "BOOT_MODE" = "BOOT_MODE",
+    "CODE" = "CODE"
 };

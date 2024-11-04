@@ -6,22 +6,25 @@
   "main": "index.ts",
   "dependencies": {
     "@jstz-dev/jstz": "^0.0.0",
+    "@juanelas/base64": "^1.1.5",
     "ts-pattern": "^5.5.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.13",
+    "@types/node": "^22.8.4",
     "esbuild": "^0.20.2",
     "jest": "^29.7.0",
     "ts-jest": "^29.2.5",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.19.2",
     "typescript": "^5.6.3"
   },
   "scripts": {
     "build": "esbuild index.ts --bundle --format=esm --target=esnext --minify --outfile=dist/index.js",
+    "chunk": "esbuild index.ts --bundle --format=iife --global-name=\"handler\" --minify --outfile=dist/index_iife.js && npx tsx  chunk.ts dist/index_iife.js dist",
+    "hello": "esbuild hello.ts --bundle --format=iife --global-name=\"handler\" --minify --outfile=dist/hello.js && npx tsx chunk.ts dist/hello.js dist",
     "build_proxy_version": "esbuild ./proxy_version/index.ts --bundle --format=esm --target=esnext --minify --outfile=dist/proxy_version/index.js && esbuild ./proxy_version/odds.ts --bundle --format=esm --target=esnext --minify --outfile=dist/proxy_version/odds.js ",
     "build_chunkstorage_version": "esbuild ./chunkstorage_version/index.ts --platform=node --bundle --format=esm --target=esnext --minify --outfile=dist/chunkstorage_version/index.js  ",
-    "test": "jest --runTestsByPath index.test.ts",
     "test_proxy_version": "jest --runTestsByPath ./proxy_version/index.test.ts",
-    "test_chunkstorage_version": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest  --runTestsByPath ./chunkstorage_version/index.test.ts"
+    "test": "npm run chunk && npm run build_chunkstorage_version  && jest  --runTestsByPath ./chunkstorage_version/index.test.ts"
   }
 }
