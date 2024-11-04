@@ -33,6 +33,8 @@ const placeBet = (
 
   //save to storage
   Kv.set(KEYS.BETMAP, bets);
+
+  console.log("BETMAP",Kv.get(KEYS.BETMAP)!)
   return new Response(JSON.stringify({ id: betId }));
 };
 
@@ -90,7 +92,7 @@ const resolveResult = (
 
 const generateBetId = (): string => {
   console.log("Calling generateBetId")
-  return Math.random().toString(36).substr(2, 9);
+  return Math.random().toString(36).slice(2, 9);
 };
 
 /**
@@ -184,6 +186,9 @@ const handler = async (request: Request): Promise<Response> => {
           } else if (request.method === "GET") {
             console.debug("bet GET called");
 
+
+            console.log("BETMAP",Kv.get(KEYS.BETMAP)!)
+ 
             const betmap = new Map<string, Bet>(
               Object.entries(Kv.get(KEYS.BETMAP)!)
             );

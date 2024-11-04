@@ -27,8 +27,8 @@ more ~/.jstz/config.json
 5. call
 
 ```
-jstz run tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/ping -n dev
-jstz run tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/init -n dev
+jstz run tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/ping -n dev
+jstz run tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/init -n dev
 
 ```
 
@@ -95,7 +95,7 @@ npm run build_chunkstorage_version
 ```
 jstz sandbox start
 jstz deploy dist/chunkstorage_version/index.js -n dev
-jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/ping" -n dev -t
+jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/ping" -n dev -t
 ```
 
 5. (optional) send money to your buddy
@@ -110,17 +110,17 @@ jstz bridge deposit --from bootstrap1 --to tz1eVqP1XNL9SCrrgkXgV5ZcteSULwiykDZ8 
 
 npm run chunk
 
-jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/init" -n dev -t
-jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/code" -n dev -t
+jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/init" -n dev -t
+jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/code" -n dev -t
 
-jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/chunk" -n dev -t -r POST -d $(< ./dist/part-1.txt)
-jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/chunk" -n dev -t -r POST -d $(< ./dist/part-2.txt)
-jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/chunk" -n dev -t -r POST -d $(< ./dist/part-3.txt)
-jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/chunk" -n dev -t -r POST -d $(< ./dist/part-4.txt)
-jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/chunk" -n dev -t -r POST -d $(< ./dist/part-5.txt)
-jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/chunk" -n dev -t -r POST -d ""
+jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/chunk" -n dev -t -r POST -d $(< ./dist/part-1.txt)
+jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/chunk" -n dev -t -r POST -d $(< ./dist/part-2.txt)
+jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/chunk" -n dev -t -r POST -d $(< ./dist/part-3.txt)
+jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/chunk" -n dev -t -r POST -d $(< ./dist/part-4.txt)
+jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/chunk" -n dev -t -r POST -d $(< ./dist/part-5.txt)
+jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/chunk" -n dev -t -r POST -d ""
 
-jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/code" -n dev -t
+jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/code" -n dev -t
 
 
 
@@ -132,6 +132,6 @@ jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/code" -n dev -t
 
 
 ```
-jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/bet" -n dev -t -g 10000000
-jstz run "tezos://tz1eGieuRwYM7N5xwRPKSiS9ZU8BSkGBathj/bet" -n dev -t -r POST -d '{"option":"trump","amount":1}'
+jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/bet" -n dev -t -g 10000000
+jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/bet" -n dev -t -r POST -d '{"option":"trump","amount":1}'
 ```
