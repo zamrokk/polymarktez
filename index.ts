@@ -32,7 +32,7 @@ const placeBet = (
   console.log(`Bet placed: ${amount} on ${selection} at odds of ${odds}`);
 
   //save to storage
-  Kv.set(KEYS.BETMAP, bets);
+  Kv.set(KEYS.BETMAP,Object.fromEntries(bets.entries()));
 
   console.log("BETMAP",Kv.get(KEYS.BETMAP)!)
   return new Response(JSON.stringify({ id: betId }));

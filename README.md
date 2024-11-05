@@ -24,11 +24,16 @@ jstz bridge deposit --from bootstrap1 --to tz1eVqP1XNL9SCrrgkXgV5ZcteSULwiykDZ8 
 more ~/.jstz/config.json
 ```
 
+//second account
+ random2
+Generated passphrase: fatal either coach hidden young apart frost believe sphere shuffle earn hidden
+User created with address: tz1V6x4YzgxAvLnhZsZa7NQdW2BZaoRN2iyk
+
 5. call
 
 ```
-jstz run tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/ping -n dev
-jstz run tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/init -n dev
+jstz run tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/ping -n dev
+jstz run tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/init -n dev
 
 ```
 
@@ -94,8 +99,8 @@ npm run build_chunkstorage_version
 
 ```
 jstz sandbox start
-jstz deploy dist/chunkstorage_version/index.js -n dev
-jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/ping" -n dev -t
+jstz deploy dist/chunkstorage_version/index.js -n dev -b 3  
+jstz run "tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/ping" -n dev -t
 ```
 
 5. (optional) send money to your buddy
@@ -110,17 +115,17 @@ jstz bridge deposit --from bootstrap1 --to tz1eVqP1XNL9SCrrgkXgV5ZcteSULwiykDZ8 
 
 npm run chunk
 
-jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/init" -n dev -t
-jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/code" -n dev -t
+jstz run "tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/init" -n dev -t
+jstz run "tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/code" -n dev -t
 
-jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/chunk" -n dev -t -r POST -d $(< ./dist/part-1.txt)
-jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/chunk" -n dev -t -r POST -d $(< ./dist/part-2.txt)
-jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/chunk" -n dev -t -r POST -d $(< ./dist/part-3.txt)
-jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/chunk" -n dev -t -r POST -d $(< ./dist/part-4.txt)
-jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/chunk" -n dev -t -r POST -d $(< ./dist/part-5.txt)
-jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/chunk" -n dev -t -r POST -d ""
+jstz run "tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/chunk" -n dev -t -r POST -d $(< ./dist/part-1.txt)
+jstz run "tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/chunk" -n dev -t -r POST -d $(< ./dist/part-2.txt)
+jstz run "tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/chunk" -n dev -t -r POST -d $(< ./dist/part-3.txt)
+jstz run "tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/chunk" -n dev -t -r POST -d $(< ./dist/part-4.txt)
+jstz run "tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/chunk" -n dev -t -r POST -d $(< ./dist/part-5.txt)
+jstz run "tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/chunk" -n dev -t -r POST -d ""
 
-jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/code" -n dev -t
+jstz run "tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/code" -n dev -t
 
 
 
@@ -132,6 +137,19 @@ jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/code" -n dev -t
 
 
 ```
-jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/bet" -n dev -t -g 10000000
-jstz run "tezos://tz1WuUmNMFvbyF8FHVxKgURRGcqCyGdTCLjt/bet" -n dev -t -r POST -d '{"option":"trump","amount":1}'
+jstz run "tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/bet" -n dev -t 
+jstz run "tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/bet" -n dev -t -r POST -d '{"option":"trump","amount":1}'
+jstz run "tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/odds?option=trump&amount=1" -n dev -t 
+
+jstz login random2
+
+jstz run "tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/bet" -n dev -t -r POST -d '{"option":"harris","amount":2}'
+jstz run "tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/bet" -n dev -t 
+jstz run "tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/odds?option=trump&amount=1" -n dev -t 
+jstz run "tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/odds?option=harris&amount=1" -n dev -t 
+
+jstz login random
+jstz run "tezos://tz1U9qqRU3SpVkSok1PjosCeQb3UaACi2Dc4/result" -n dev -t -r POST -d '{"option":"trump","result":"WIN"}'
+
+
 ```
