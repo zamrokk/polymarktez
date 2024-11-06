@@ -21,7 +21,6 @@
   "scripts": {
     "build": "esbuild index.ts --bundle --format=esm --target=esnext --minify --outfile=dist/index.js",
     "chunk": "esbuild index.ts --bundle --format=iife --global-name=\"handler\" --minify --outfile=dist/index_iife.js && npx tsx  chunk.ts dist/index_iife.js dist",
-    "hello": "esbuild hello.ts --bundle --format=iife --global-name=\"handler\" --minify --outfile=dist/hello.js && npx tsx chunk.ts dist/hello.js dist",
     "build_proxy_version": "esbuild ./proxy_version/index.ts --bundle --format=esm --target=esnext --minify --outfile=dist/proxy_version/index.js && esbuild ./proxy_version/odds.ts --bundle --format=esm --target=esnext --minify --outfile=dist/proxy_version/odds.js ",
     "build_chunkstorage_version": "esbuild ./chunkstorage_version/index.ts --platform=node --bundle --format=esm --target=esnext --minify --outfile=dist/chunkstorage_version/index.js  ",
     "test_proxy_version": "jest --runTestsByPath ./proxy_version/index.test.ts",
