@@ -16,7 +16,7 @@ jobs:
       - name: Use node
         uses: actions/setup-node@v4
         with:
-    node-version: 18
+          node-version: 18
       - run: npm ci
       - run: npm run build    
   test: 
@@ -28,7 +28,7 @@ jobs:
         - name: Use node 
           uses: actions/setup-node@v4
           with:
-      node-version: 18
+            node-version: 18
         - run: npm ci   
         - run: npm test
   deploy:
@@ -43,25 +43,25 @@ jobs:
         - name: Use node 
           uses: actions/setup-node@v4
           with:
-      node-version: 18
+            node-version: 18
         - run: npm ci   
         - run: npm run build
         - name: deploy
           id: deployment
           uses: nomadic-labs/tezosX-deploy@v0.0.1
           with:
-    sk: ${{ secrets.SK }}
-    user: ${{ env.PKH }}
-    file: dist/index.js
-    rpc: ${{ env.TEZOSX_URL }}
-    balance: 0
-    gas-limit: 1000000
-    name: polymarktez
-    runtime: jstz
-    instances: 2
-    memory: 256M
-    cpu: standard-1
-    region: eu
+            sk: ${{ secrets.SK }}
+            user: ${{ env.PKH }}
+            file: dist/index.js
+            rpc: ${{ env.TEZOSX_URL }}
+            balance: 0
+            gas-limit: 1000000
+            name: polymarktez
+            runtime: jstz
+            instances: 2
+            memory: 256M
+            cpu: standard-1
+            region: eu
   build-pages:
     runs-on: ubuntu-latest
     env:
