@@ -45,7 +45,17 @@ const chunker = async (request: Request) => {
     console.log("last call to end the uploads");
     Kv.set(KEYS.BOOT_MODE, BOOT_MODE.BOOTED);
 
-    Kv.set(KEYS.CODE, atob(Kv.get(KEYS.CODE) || "")); //decode base64
+    try{
+      Kv.set(KEYS.CODE, atob(Kv.get(KEYS.CODE) || "")); //decode base64
+    }catch(e){
+      console.warn("atob failed, trying with Buffer ...",e)
+      try {
+        Kv.set(KEYS.CODE, Buffer.from(Kv.get<string>(KEYS.CODE)!,"base64url").toString()); //decode base64
+      } catch (error) {
+        console.log("Impossible to decode64url even with Buffer",error);
+        throw e;
+      }
+    }
   } else {
     console.log("continue to receive chunks ...");
     const code = Kv.get(KEYS.CODE) || "";
