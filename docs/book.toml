@@ -1,0 +1,6 @@
+[book]
+authors = ["Benjamin Fuentes"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Polymarktez - Guide to develop on Jstz"
