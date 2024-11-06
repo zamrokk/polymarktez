@@ -135,7 +135,6 @@ jstz run "tezos://tz1RmHeyX8HPpum8xz7upvcqsrKyf1A5d85p/code" -n dev -t
 7. try a real call
 
 
-
 ```
 jstz run "tezos://tz1RmHeyX8HPpum8xz7upvcqsrKyf1A5d85p/bet" -n dev -t 
 jstz run "tezos://tz1RmHeyX8HPpum8xz7upvcqsrKyf1A5d85p/bet" -n dev -t -r POST -d '{"option":"trump","amount":1}'
