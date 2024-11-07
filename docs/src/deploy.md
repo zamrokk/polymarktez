@@ -22,7 +22,7 @@
     ```
 
 1. Deploy the proxy contract
-> Note : (Optional) -b argument send some money on the contract so you can validate test scenarios later 
+    > Note : (Optional) -b argument send some money on the contract so you can validate test scenarios later 
 
     ```bash
     jstz deploy dist/chunk/index.js -n dev -b 3  

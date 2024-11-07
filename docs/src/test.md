@@ -1,6 +1,7 @@
 # Testing
 
 > Note 1 : Previously, Jest dependencies have been installed
+
 > Note 2 : Tests can be written for the index.ts but the real code that will run is gonna be deployed with the chunk script and a proxy contract. To be sure that the solution works end to end and match with the CD pipeline flow, better to write tests for the ./chunk/index.ts. At the end, the same code from your index.ts will be uploaded and tested so there is no functional difference
 
 Jest is the most popular Testing framework today and supported by Meta company

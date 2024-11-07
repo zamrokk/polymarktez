@@ -1,6 +1,6 @@
 # Jstz setup
 
-> Official setup page here : https://jstz-dev.github.io/jstz/installation.html
+> Official setup page here : [jstz installation](https://jstz-dev.github.io/jstz/installation.html)
 
 Let's suppose we are running on Windows / WSL2 Ubuntu
 
