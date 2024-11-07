@@ -142,7 +142,7 @@ const handler = async (request: Request): Promise<Response> => {
 
   console.debug("params", params);
 
-  // remove first / to simplify matching afte rthe split
+  // remove first / to simplify matching after the split
   let pathCutArr = path.replace("/", "").split("/");
 
   try {
@@ -273,7 +273,6 @@ const handler = async (request: Request): Promise<Response> => {
     throw error;
   }
 
-  return new Response();
 };
 
 export default handler;

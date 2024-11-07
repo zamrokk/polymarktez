@@ -45,14 +45,17 @@ const chunker = async (request: Request) => {
     console.log("last call to end the uploads");
     Kv.set(KEYS.BOOT_MODE, BOOT_MODE.BOOTED);
 
-    try{
+    try {
       Kv.set(KEYS.CODE, atob(Kv.get(KEYS.CODE) || "")); //decode base64
-    }catch(e){
-      console.warn("atob failed, trying with Buffer ...",e)
+    } catch (e) {
+      console.warn("atob failed, trying with Buffer ...", e);
       try {
-        Kv.set(KEYS.CODE, Buffer.from(Kv.get<string>(KEYS.CODE)!,"base64url").toString()); //decode base64
+        Kv.set(
+          KEYS.CODE,
+          Buffer.from(Kv.get<string>(KEYS.CODE)!, "base64url").toString()
+        ); //decode base64
       } catch (error) {
-        console.log("Impossible to decode64url even with Buffer",error);
+        console.log("Impossible to decode64url even with Buffer", error);
         throw e;
       }
     }
@@ -67,7 +70,7 @@ const handler = async (request: Request): Promise<Response> => {
   const url = new URL(request.url);
   const path = url.pathname;
 
-  //FIXME : ping
+  // ping
   if (path === "/ping") {
     console.log("Hello from runner smart function 👋");
     return new Response("Pong");
@@ -76,7 +79,7 @@ const handler = async (request: Request): Promise<Response> => {
   //FIXME HACK : init KV storage and return
   if (path === "/init") return await init(request);
 
-  //FIXME HACK : init KV storage and return
+  //FIXME HACK : upload code chunks
   if (path === "/code") return new Response(await Kv.get(KEYS.CODE));
 
   const mode = Kv.get<BOOT_MODE>(KEYS.BOOT_MODE) || BOOT_MODE.CHUNKING;

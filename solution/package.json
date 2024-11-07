@@ -15,6 +15,12 @@
     "typescript": "^5.6.3"
   },
   "scripts": {
-    "build": "esbuild index.ts --bundle --format=esm --target=esnext --minify --outfile=dist/index.js"
+    "build": "esbuild index.ts --bundle --format=esm --target=esnext --minify --outfile=dist/index.js",
+    "chunk": "esbuild index.ts --bundle --format=iife --global-name=\"handler\" --minify --outfile=dist/index_iife.js && npx tsx  chunk.ts dist/index_iife.js dist",
+    "build_chunk": "esbuild ./chunk/index.ts --platform=node --bundle --format=esm --target=esnext --minify --outfile=dist/chunk/index.js  ",
+    "test": "npm run chunk && npm run build_chunk  && jest  --runTestsByPath ./chunk/index.test.ts"
+  },
+  "dependencies": {
+    "ts-pattern": "^5.5.0"
   }
 }

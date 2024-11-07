@@ -92,14 +92,14 @@ npm run build
 3. build the "interface" contract that will be the one you deploy
 
 ```
-npm run build_chunkstorage_version
+npm run build_chunk
 ```
 
 4. Start sandbox and deploy the "interface" contract
 
 ```
 jstz sandbox start
-jstz deploy dist/chunkstorage_version/index.js -n dev -b 3  
+jstz deploy dist/chunk/index.js -n dev -b 3  
 jstz run "tezos://tz1RmHeyX8HPpum8xz7upvcqsrKyf1A5d85p/ping" -n dev -t
 ```
 

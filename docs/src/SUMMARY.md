@@ -6,6 +6,7 @@
 - [Testing](./test.md)
 - [Deploy to local sandbox](./deploy.md)
 - [Frontend](./frontend.md)
+- [CICD](./cicd.md)
 
 
 
