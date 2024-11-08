@@ -62,23 +62,11 @@ import { Jstz, User } from "@jstz-dev/sdk";
 
 ## notes
 
-- 11/10/2024 : installing NPM on Ubuntu 24.04.1 LTS . npm -v => 9.2.0 . On doc it says : npm (>= 9.6.7)
-- controller, it would be great to have something siimilar to nestjs annotations => less code, better readibility : https://docs.nestjs.com/controllers#routing
 - how to login with wallet ?
-- just simple example from scratch with default mandatory stuff ? (typing deps, vite config deps, etc ...)
 - improve npm package publication because it is not on npm repo and not possible with a git link too. Need to compile and do a relative path, rn (i.e install nix and build it)
   `alias jstz='docker run --rm -v "/tmp:/tmp" -v "$HOME/.jstz:/root/.jstz" -v "$PWD:$PWD" -w "$PWD" --network host -it ghcr.io/jstz-dev/jstz/jstz-cli:20241007'`
-- kill the config file if error : `rm -rf ~/.jstz/config.json`
-- problem with mnemonic and accounts
-- Host networking is supported on Docker Desktop version 4.34 and later. To enable this feature:
-  Sign in to your Docker account in Docker Desktop.
-  Navigate to Settings.
-  Under the Resources tab, select Network.
-  Check the Enable host networking option.
-  Select Apply and restart.
-- jstz logs trace : cannot exit with ctrl+C or D
 
-# CHUNK version for buil / deployment
+# CHUNK version for build / deployment
 
 1. build the code to test it is building fine
 

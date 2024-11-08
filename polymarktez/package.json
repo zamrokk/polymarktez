@@ -11,8 +11,6 @@
   },
   "dependencies": {
     "@jstz-dev/sdk": "file:../../jstz/packages/sdk",
-    "@taquito/signer": "^20.0.1",
-    "@taquito/taquito": "^20.0.1",
     "buffer": "^6.0.3",
     "process": "^0.11.10",
     "react": "^18.3.1",

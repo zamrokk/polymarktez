@@ -4,13 +4,19 @@
 
 Let's suppose we are running on Windows / WSL2 Ubuntu
 
-Once Docker is installed, install the Jstz CLI
+1. Once Docker is installed, install the Jstz CLI
 
-```bash
-source <(curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/jstz-dev/jstz/main/scripts/install-jstz-cli.sh)
+    ```bash
+    source <(curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/jstz-dev/jstz/main/scripts/install-jstz-cli.sh)
 
-jstz --version
-```
+    jstz --version
+    ```
 
-Install a recent version of npm (10.9.0) and node (v18.19.1)
+1. Override the jstz alias to have a more recent docker image
+
+    ```bash
+    alias jstz='docker run --rm -v "/tmp:/tmp" -v "$HOME/.jstz:/root/.jstz" -v "$PWD:$PWD" -w "$PWD" --network host -it ghcr.io/jstz-dev/jstz/jstz-cli:20241007'
+    ```
+
+1. Install a recent version of npm (10.9.0) and node (v18.19.1)
 
