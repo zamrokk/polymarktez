@@ -12,7 +12,7 @@ Let's suppose we are running on Windows / WSL2 Ubuntu
     jstz --version
     ```
 
-1. Override the jstz alias to have a more recent docker image
+1. (Optional) If your docker image is too old, override the jstz alias to have a more recent docker image like **20241007**
 
     ```bash
     alias jstz='docker run --rm -v "/tmp:/tmp" -v "$HOME/.jstz:/root/.jstz" -v "$PWD:$PWD" -w "$PWD" --network host -it ghcr.io/jstz-dev/jstz/jstz-cli:20241007'

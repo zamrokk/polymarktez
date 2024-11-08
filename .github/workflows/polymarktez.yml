@@ -45,14 +45,14 @@ jobs:
           with:
             node-version: 18
         - run: npm ci   
-        - run: npm run build
+        - run: npm run build_chunk
         - name: deploy
           id: deployment
           uses: nomadic-labs/tezosX-deploy@v0.0.1
           with:
             sk: ${{ secrets.SK }}
             user: ${{ env.PKH }}
-            file: dist/index.js
+            file: dist/chunk/index.js
             rpc: ${{ env.TEZOSX_URL }}
             balance: 0
             gas-limit: 1000000
